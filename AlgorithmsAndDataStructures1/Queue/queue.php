@@ -50,7 +50,6 @@ class Queue {
     public function getQ() {
 	return $this->q;
     }
-
     public function getHead() {
 	return $this->head;
     }
@@ -58,7 +57,57 @@ class Queue {
     public function getTail() {
 	return $this->tail;
     }
+    public function getMax() {
+	return $this->max;
+    }
+    public function getCount() {
+	return $this->count;
+    }
+    public function setQ($q) {
+	return $this->q = $q;
+    }
+    public function setHead($head) {
+	return $this->head = $head;
+    }
+
+    public function setTail($tail) {
+	return $this->tail = $tail;
+    }
+    public function setMax($max) {
+	return $this->max = $max;
+    }
+    public function setCount($count) {
+	return $this->count = $count;
+    }
+    public function setNewProcess($sec) {
+	$this->q[$this->head]['sec'] = $sec;
+    }
 }
 
+fscanf(STDIN, "%d %d", $n, $quantum);
+$processes = new Queue($n);
+for ($i = 0; $i < $n; $i++) {
+    fscanf(STDIN, "%s %d", $name, $sec);
+    $processes->enqueue(array('name' => $name, 'sec' => $sec));
+}
+$requiredSec = 0;
 
+while ($processes->getCount() != 0) {
+    $sec = $processes->getQ()[$processes->getHead()]['sec'];
+    $remainingSec = $sec - $quantum;
+    if ($remainingSec <= 0) {
+	$requiredSec += $sec;
+	$x = $processes->dequeue();
+	echo $x['name'] . " " . $requiredSec;
+	if (!$processes->isEmpty()) {
+	    echo "\n";
+	} 
+
+    } else {
+	$requiredSec += $quantum;
+        $processes->setNewProcess($processes->getQ()[$processes->getHead()]['sec'] - $quantum);
+	$x = $processes->dequeue();
+	$processes->enqueue($x);
+    }
+}
 ?>
